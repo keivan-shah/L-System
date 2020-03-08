@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>L-System</title>
+    <!-- Compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="static/css/materialize.min.css"
+    />
+    <link rel="stylesheet" href="static/css/nouislider.min.css" />
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="static/js/materialize.min.js"></script>
+    <script src="static/js/nouislider.min.js"></script>
+    <script
+      language="javascript"
+      type="text/javascript"
+      src="static/js/p5.min.js"
+    ></script>
+  </head>
+  <body>
+    <nav class="black hide-on-med-and-down">
+      <div class="nav-wrapper">
+        <a href="" class="brand-logo center">L-System Tree Generator</a>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row"></div>
+      <div class="row">
+        <div class="col l5 m12">
+          <div class="row">
+            <div class="input-field col">
+              <div class="row">
+                <div class="input-field col s12">
+                  <textarea
+                    id="input"
+                    class="materialize-textarea"
+                    placeholder="F = (Add Some Rule here!)"
+                  ></textarea>
+                  <label for="text">Rule</label>
+                </div>
+              </div>
+              <div class="row">
+                <label for="angle-slider">Angle</label>
+                <div id="angle-slider"></div>
+              </div>
+              <div class="row">
+                <label for="length-slider">Length</label>
+                <div id="length-slider"></div>
+              </div>
+
+              <div class="row center">
+                <button class="waves-effect waves-light btn s3" id="prevgen">
+                    &larr;
+                </button>
+                <button
+                  class="waves-effect waves-light btn blue s6"
+                  id="primaryTree"
+                >
+                  Generate
+                </button>
+                <button class="waves-effect waves-light btn s3" id="nextgen">
+                    &rarr;
+                </button>
+              </div>
+
+              <div class="row center">
+                <button class="waves-effect waves-light btn" id="reGen">
+                  ReGen
+                </button>
+                <button class="waves-effect waves-light btn" id="saveButton">
+                  Save Rule
+                </button>
+              </div>
+
+              <ul class="collapsible popout">
+                <li>
+                  <div class="collapsible-header">
+                    Customization
+                  </div>
+                  <div class="collapsible-body">
+                    <div class="input-field col s12">
+                      Background Color:
+                      <input type="color" id="bgColorSet" value="#000000" />
+                    </div>
+
+                    <p>
+                      <label>
+                        <input
+                          type="checkbox"
+                          class="filled-in"
+                          value="None"
+                          id="trippyColor"
+                          name="check"
+                          checked
+                        />
+                        <span>Trippy Color</span>
+                      </label>
+                    </p>
+
+                    <div class="input-field s12">
+                      Leaves Color:
+                      <input type="color" id="colorSet1" value="#ffffff" />
+                    </div>
+
+                    <div class="input-field s12">
+                      Leaves Width:
+                      <input
+                        type="number"
+                        class="width"
+                        id="widthSet1"
+                        value="1"
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+
+                    <div class="input-field s12">
+                      Twigs Color:
+                      <input type="color" id="colorSet2" value="#ffffff" />
+                    </div>
+                    <div class="input-field s12">
+                      Width:
+                      <input
+                        type="number"
+                        class="width"
+                        id="widthSet2"
+                        value="2"
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+
+                    <div class="input-field s12">
+                      Medium Branch Color:
+                      <input type="color" id="colorSet3" value="#ffffff" />
+                    </div>
+                    <div class="input-field s12">
+                      Width:
+                      <input
+                        type="number"
+                        class="width"
+                        id="widthSet3"
+                        value="3"
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+
+                    <div class="input-field s12">
+                      Large Branch:
+                      <input type="color" id="colorSet4" value="#ffffff" />
+                    </div>
+                    <div class="input-field s12">
+                      Width:
+                      <input
+                        type="number"
+                        class="width"
+                        id="widthSet4"
+                        value="4"
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+                    <div class="input-field s12">
+                      Trunk Color:
+                      <input type="color" id="colorSet5" value="#ffffff" />
+                    </div>
+
+                    <div class="input-field s12">
+                      Width:
+                      <input
+                        type="number"
+                        class="width"
+                        id="widthSet5"
+                        value="5"
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="collapsible-header">
+                    Possible Rules
+                  </div>
+                  <div class="collapsible-body">
+                    <ul id="trials"></ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col l7 s12">
+          <div class="row">
+            <div id="canvas"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      var lengthSlider = document.getElementById("length-slider");
+      noUiSlider.create(lengthSlider, {
+        start: [75],
+        step: 5,
+        orientation: "horizontal",
+        range: {
+          min: 50,
+          max: 150
+        },
+        format: wNumb({
+          decimals: 0
+        })
+      });
+
+      var angleSlider = document.getElementById("angle-slider");
+      noUiSlider.create(angleSlider, {
+        start: [60],
+        step: 1,
+        orientation: "horizontal",
+        range: {
+          min: 0,
+          max: 360
+        },
+        format: wNumb({
+          decimals: 0
+        })
+      });
+
+      document.addEventListener("DOMContentLoaded", function() {
+        var elems = document.querySelectorAll(".collapsible");
+        var instances = M.Collapsible.init(elems, {
+          accordion: false
+        });
+      });
+    </script>
+    <script type="text/javascript" src="static/js/treegen.js"></script>
+  </body>
+</html>
